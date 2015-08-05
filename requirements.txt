@@ -1,0 +1,10 @@
+django
+qiniu
+redis
+celery
+djangorestframework
+Wand
+requests
+ipython
+ipdb
+
