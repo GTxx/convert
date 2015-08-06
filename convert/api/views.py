@@ -33,8 +33,14 @@ def qiniu_persist_callback(request):
         id=request.query_params['convert_task_id'])
     convert_result = ConvertResult.objects.create(
         key=request.data['items'][0]['key'],
-        convert_task=convert_task)
+        convert_task=convert_task, file_type=ConvertResult.PDF)
     convert_to_image.delay(convert_task.id, convert_result.id)
-    convert_task.status = 11
+    convert_task.status = ConvertTask.STATUS_CONVERT_TO_PDF
     convert_task.save()
+    return Response(data={'ok': 'ok'})
+
+
+@api_view(['POST'])
+def test_callback(request):
+    print('test callback dataL: ', request.data)
     return Response(data={'ok': 'ok'})

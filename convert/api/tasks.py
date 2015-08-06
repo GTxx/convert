@@ -57,7 +57,6 @@ def convert_to_pdf(source_key, convert_task_id=None):
             QINIU_CALLBACK_URL,
             '/api/qiniu_persist_callback?convert_task_id={}'.format(convert_task_id)))
     ret, info = pfop.execute(source_key, [op, ])
-    import ipdb; ipdb.set_trace()
     return ret, info
 
 
@@ -90,23 +89,20 @@ def copy_convert(convert_task_id):
 
     response, info = copy_to_qiniu(convert_task.source_url)
     if not info.ok():
-        convert_task.status = -1
+        convert_task.status = ConvertTask.STATUS_FAIL
         convert_task.fail_log = str(info)
         convert_task.save()
-
-        # TODO: send fail message to v2
         return
 
-    convert_task.status = 1
+    convert_task.status = ConvertTask.STATUS_COPY_TO_QINIU
     convert_task.key = response['key']
     convert_task.save()
 
     response, info = convert_to_pdf(response['key'], convert_task_id)
     if not info.ok():
-        convert_task.status = -1
+        convert_task.status = ConvertTask.STATUS_FAIL
         convert_task.fail_log = str(info)
         convert_task.save()
-        # TODO: send fail message to v2
         return
 
     convert_task.status = 2
@@ -117,11 +113,18 @@ def copy_convert(convert_task_id):
 def convert_to_image(convert_task_id, convert_result_id):
     convert_task = ConvertTask.objects.get(id=convert_task_id)
     convert_result_pdf = ConvertResult.objects.get(id=convert_result_id)
-    key_list = download_pdf_convert_image_save_qiniu(convert_result_pdf.key)
+    try:
+        key_list = download_pdf_convert_image_save_qiniu(convert_result_pdf.key)
+    except Exception as e:
+        convert_task.status = ConvertTask.STATUS_FAIL
+        convert_task.fail_log = str(e)
+        convert_task.save()
+        return
 
     for key in key_list:
-        ConvertResult.objects.create(key=key, convert_task=convert_task)
+        ConvertResult.objects.create(key=key, convert_task=convert_task,
+                                     file_type=ConvertResult.JPEG)
 
-    # TODO: callback to v2
-    return key_list
+    convert_task.status = ConvertTask.STATUS_DONE
+    convert_task.save()
 
