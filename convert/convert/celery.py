@@ -9,8 +9,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'convert.settings')
 
 from django.conf import settings
 
-app = Celery('convert_celery', broker='redis://localhost:6380//0')
-
+app = Celery('convert_celery')
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
 app.config_from_object('django.conf:settings')
