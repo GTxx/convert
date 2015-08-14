@@ -68,20 +68,21 @@ def download_pdf_convert_image_save_qiniu(key):
     down_file(urlparse.urljoin(QINIU_CDN_DOMAIN, key), pdf_file)
     pdf_file.seek(0)
     with Image(file=pdf_file, format='pdf') as origin:
-        with origin.convert('jpeg') as image:
-            key_list = []
-            for idx, single_image in enumerate(image.sequence):
-                with Image(image=single_image) as _img:
+        key_list = []
+        for idx, single_pdf in enumerate(origin.sequence):
+            with Image(image=single_pdf) as _img:
+                with _img.convert('jpeg') as __img:
+                    # import ipdb; ipdb.set_trace()
                     output = cStringIO.StringIO()
-                    _img.save(file=output)
+                    __img.save(file=output)
                     content = output.getvalue()
                     img_key = '{}-{}.jpeg'.format(key, idx)
                     token = qiniu_auth.upload_token(QINIU_BUCKET_NAME, img_key)
                     res = put_data(up_token=token, key=img_key, data=content, mime_type='image/jpeg')
                     print(res)
                     key_list.append(img_key)
-
-            return key_list
+                    output.close()
+        return key_list
 
 @shared_task()
 def copy_convert(convert_task_id):
