@@ -14,13 +14,15 @@ class ConvertTask(models.Model):
     STATUS_BEGIN = 0
     STATUS_COPY_TO_QINIU = 1
     STATUS_CONVERT_TO_PDF = 2
-    STATUS_DONE = 3
+    STATUS_CONVERT_TO_IMG = 3
+    STATUS_DONE = 4
     STATUS_FAIL = -1
 
     CONVERT_STATUS = (
         (STATUS_BEGIN, 'Begin'),
         (STATUS_COPY_TO_QINIU, 'Copy to QINIU'),
         (STATUS_CONVERT_TO_PDF, 'Convert To PDF'),
+        (STATUS_CONVERT_TO_IMG, 'Convert To IMG'),
         (STATUS_DONE, 'Done'),
         (STATUS_FAIL, 'Fail'),
 

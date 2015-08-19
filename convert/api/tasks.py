@@ -127,4 +127,3 @@ def convert_to_image(convert_task_id, convert_result_id):
 
     convert_task.status = ConvertTask.STATUS_DONE
     convert_task.save()
-
