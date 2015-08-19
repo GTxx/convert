@@ -1,3 +1,9 @@
+# 依赖
+image处理需要安装imagemagic和build基础库，请参考[docker build file](https://github.com/docker-library/buildpack-deps/blob/1f3d93c27c45732774639eff8ade2b75cf13bbea/jessie/Dockerfile）
+pdf转换成image需要安装ghostscript：
+```
+sudo apt-get install ghostscript
+```
 # 配置
 在local_settings.py中加入
 ```
