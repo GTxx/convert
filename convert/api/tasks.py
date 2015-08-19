@@ -42,7 +42,7 @@ def down_file(file_url, dst_file):
 
 
 def copy_to_qiniu(source_url):
-    key = str(uuid4()) + os.path.splitext(urlparse.urlparse(source_url).path)[1]
+    key = 'to_pdf/' + str(uuid4()) + os.path.splitext(urlparse.urlparse(source_url).path)[1]
     ret, info = bucket.fetch(source_url, QINIU_BUCKET_NAME, key)
     return ret, info
 
