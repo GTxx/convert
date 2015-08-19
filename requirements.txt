@@ -7,4 +7,6 @@ Wand
 requests
 ipython
 ipdb
+uwsgi
+supervisor
 
