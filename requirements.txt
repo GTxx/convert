@@ -7,6 +7,7 @@ Wand
 requests
 ipython
 ipdb
+django-cors-headers
 uwsgi
 supervisor
 

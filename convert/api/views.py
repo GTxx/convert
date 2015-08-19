@@ -26,8 +26,6 @@ class ConvertTaskViewSet(viewsets.ModelViewSet):
 
 @api_view(['POST'])
 def qiniu_persist_callback(request):
-    print(request.data)
-    print(request.query_params)
     # import ipdb; ipdb.set_trace()
     convert_task = ConvertTask.objects.get(
         id=request.query_params['convert_task_id'])

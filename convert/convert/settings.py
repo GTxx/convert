@@ -27,13 +27,16 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    # 3rd
+    'corsheaders',
     'rest_framework',
+    # dev
     'api'
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # cross domain
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -110,6 +113,8 @@ LOGGING = {
         }
     },
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 try:
     from .local_settings import *
