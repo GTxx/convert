@@ -10,3 +10,4 @@ ipdb
 uwsgi
 supervisor
 
+newrelic

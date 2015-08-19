@@ -20,7 +20,6 @@ QINIU_CDN_DOMAIN = settings.QINIU_CDN_DOMAIN
 QINIU_BUCKET_NAME = settings.QINIU_BUCKET_NAME
 qiniu_auth = Auth(settings.QINIU_AK, settings.QINIU_SK)
 bucket = BucketManager(qiniu_auth)
-PPT_URL = 'http://taidiiv2-static.s3.amazonaws.com/lessonplanv3/materials/i%20love%20you%20benny%20jaya%20hehehe_good%20xx_96583f32-413b-4175-944d-24ecdd5766ad.pptx'
 
 
 @contextlib.contextmanager
