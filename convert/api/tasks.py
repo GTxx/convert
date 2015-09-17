@@ -125,5 +125,5 @@ def convert_to_image(convert_task_id, convert_result_id):
         ConvertResult.objects.create(key=key, convert_task=convert_task,
                                      file_type=ConvertResult.JPEG)
 
-    convert_task.status = ConvertTask.STATUS_DONE
+    convert_task.status = ConvertTask.STATUS_CONVERT_TO_IMG
     convert_task.save()
