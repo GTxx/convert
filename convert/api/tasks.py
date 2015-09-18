@@ -63,6 +63,7 @@ def download_pdf_convert_image_save_qiniu(key):
     # 1 pdf下载到本地的临时文件中
     # 2 pdf转成jpeg
     # 3 jpeg保存到qiniu
+    # TODO: 非常容易出现bug，"Postscript delegate failed `/tmp/magick-mBZ1wRKn': No such file or directory @ error/pdf.c/ReadPDFImage/677"
     pdf_file = tempfile.TemporaryFile(suffix='.pdf')
     down_file(urlparse.urljoin(QINIU_CDN_DOMAIN, key), pdf_file)
     pdf_file.seek(0)
@@ -113,16 +114,19 @@ def copy_convert(convert_task_id):
 def convert_to_image(convert_task_id, convert_result_id):
     convert_task = ConvertTask.objects.get(id=convert_task_id)
     convert_result_pdf = ConvertResult.objects.get(id=convert_result_id)
-    try:
-        key_list = download_pdf_convert_image_save_qiniu(convert_result_pdf.key)
-    except Exception as e:
-        convert_task.status = ConvertTask.STATUS_FAIL
-        convert_task.fail_log = str(e)
-        convert_task.save()
-        return
-
-    for key in key_list:
-        ConvertResult.objects.create(key=key, convert_task=convert_task,
+    # try:
+    #     key_list = download_pdf_convert_image_save_qiniu(convert_result_pdf.key)
+    # except Exception as e:
+    #     convert_task.status = ConvertTask.STATUS_FAIL
+    #     convert_task.fail_log = str(e)
+    #     convert_task.save()
+    #     return
+    pdf_url = urlparse.urljoin(QINIU_CDN_DOMAIN, convert_result_pdf.key, '?odconv/jpg/info')
+    response = requests.get(pdf_url)
+    page_num = response.json().get('page_num')
+    for idx in range(1, page_num+1):
+        ConvertResult.objects.create(key='{}{}{}'.format(convert_result_pdf.key, '?odconv/jpg/page/', idx),
+                                     convert_task=convert_task,
                                      file_type=ConvertResult.JPEG)
 
     convert_task.status = ConvertTask.STATUS_CONVERT_TO_IMG
