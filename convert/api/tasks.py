@@ -122,8 +122,8 @@ def convert_to_image(convert_task_id, convert_result_id):
     #     convert_task.save()
     #     return
     try:
-        pdf_url = urlparse.urljoin(QINIU_CDN_DOMAIN, convert_result_pdf.key, '?odconv/jpg/info')
-        response = requests.get(pdf_url)
+        pdf_url = urlparse.urljoin(QINIU_CDN_DOMAIN, convert_result_pdf.key)
+        response = requests.get(pdf_url+'?odconv/jpg/info')
         page_num = response.json().get('page_num')
         for idx in range(1, page_num+1):
             ConvertResult.objects.create(key='{}{}{}'.format(convert_result_pdf.key, '?odconv/jpg/page/', idx),
