@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, list_route
 from rest_framework.response import Response
 from rest_framework import viewsets, status
@@ -26,15 +27,24 @@ class ConvertTaskViewSet(viewsets.ModelViewSet):
 
 @api_view(['POST'])
 def qiniu_persist_callback(request):
-    # import ipdb; ipdb.set_trace()
-    convert_task = ConvertTask.objects.get(
-        id=request.query_params['convert_task_id'])
-    convert_result = ConvertResult.objects.create(
-        key=request.data['items'][0]['key'],
-        convert_task=convert_task, file_type=ConvertResult.PDF)
-    convert_to_image.delay(convert_task.id, convert_result.id)
-    convert_task.status = ConvertTask.STATUS_CONVERT_TO_PDF
-    convert_task.save()
+    convert_task = get_object_or_404(ConvertTask,
+                                     id=request.query_params['convert_task_id'])
+    if request.data['items'][0].get('error'):
+        convert_task.status = ConvertTask.STATUS_FAIL
+        convert_task.fail_log = str(request.data)
+        convert_task.save()
+    else:
+        try:
+            convert_result = ConvertResult.objects.create(
+                key=request.data['items'][0]['key'],
+                convert_task=convert_task, file_type=ConvertResult.PDF)
+            convert_to_image.delay(convert_task.id, convert_result.id)
+            convert_task.status = ConvertTask.STATUS_CONVERT_TO_PDF
+            convert_task.save()
+        except Exception as e:
+            convert_task.status = ConvertTask.STATUS_FAIL
+            convert_task.fail_log = str(e)
+            convert_task.save()
     return Response(data={'ok': 'ok'})
 
 

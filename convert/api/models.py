@@ -31,7 +31,7 @@ class ConvertTask(models.Model):
     created_time = models.DateTimeField(auto_now_add=True, verbose_name=u'创建时间')
     update_time = models.DateTimeField(auto_now=True, verbose_name=u'修改时间')
     convert_type = models.IntegerField(choices=CONVERT_TYPE_CHOICES, default=TO_JPG)
-    source_url = models.URLField(verbose_name=u'PPT，DOC源文件地址')
+    source_url = models.URLField(max_length=400, verbose_name=u'PPT，DOC源文件地址')
     key = models.CharField(max_length=200, blank=True, null=True)
     status = models.IntegerField(choices=CONVERT_STATUS, default=STATUS_BEGIN)
     callback_url = models.URLField()
