@@ -99,15 +99,23 @@ def copy_convert(convert_task_id):
     convert_task.key = response['key']
     convert_task.save()
 
-    response, info = convert_to_pdf(response['key'], convert_task_id)
-    if not info.ok():
-        convert_task.status = ConvertTask.STATUS_FAIL
-        convert_task.fail_log = str(info)
-        convert_task.save()
-        return
+    if not convert_task.key.endswith('pdf'):
+        response, info = convert_to_pdf(response['key'], convert_task_id)
+        if not info.ok():
+            convert_task.status = ConvertTask.STATUS_FAIL
+            convert_task.fail_log = str(info)
+            convert_task.save()
+            return
 
-    convert_task.status = 2
-    convert_task.save()
+        convert_task.status = ConvertTask.STATUS_CONVERT_TO_PDF
+        convert_task.save()
+    else:
+        convert_result = ConvertResult.objects.create(
+            key=convert_task.key,
+            convert_task=convert_task, file_type=ConvertResult.PDF)
+        convert_to_image.delay(convert_task.id, convert_result.id)
+        convert_task.status = ConvertTask.STATUS_CONVERT_TO_PDF
+        convert_task.save()
 
 
 @shared_task()
