@@ -33,3 +33,11 @@ method: post
     "callback_url": "http://server.com" // will post results to this url 
 }
 ```
+
+# 部署
+在本目录的上一级目录生成*newrelic.ini*文件，然后运行
+
+```
+cd convert # NOTE: 因为super.conf中用了相对路径，所以一定要进入super.conf文件所在目录
+supervisord -c super.conf
+```
