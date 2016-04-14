@@ -8,7 +8,7 @@ sudo apt-get install ghostscript
 在local_settings.py中加入
 ```
 # QINIU
-QINIU_CALLBACK_URL = '服务器地址'
+QINIU_CALLBACK_URL = '服务器地址' # qiniu回调时使用的服务器地址，请根据自己服务器的域名或者ip设置，否则不能获取转换信息
 QINIU_CDN_DOMAIN = '七牛bucket地址'
 QINIU_BUCKET_NAME = 'bucket name'
 QINIU_AK = 'your ak'
